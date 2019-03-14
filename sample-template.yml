@@ -1,0 +1,229 @@
+
+# Sample Template from Heimdall
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Heimdall Backend Proxy
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Parameters:
+  SHA:
+    Type: String
+    Default: NOT_FOUND
+    Description: Github build SHA
+
+Resources:
+  HeimdallProxyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+
+  HeimdallProxyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index-lambda.handler
+      Runtime: nodejs8.10
+      Timeout: 180
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Action:
+              - codebuild:ListBuilds
+              - codebuild:StartBuild
+              - codebuild:BatchGetBuilds
+              - codebuild:ListBuildsForProject
+            Effect: Allow
+            Resource: arn:aws:codebuild:us-west-2:125900505984:project/codebuild_dev_heimdall
+        - Statement:
+            Action: ssm:GetParameter
+            Effect: Allow
+            Resource: arn:aws:ssm:us-west-2:125900505984:parameter/tools/prod/heimdall/database/password
+        - Statement:
+            Action:
+              - glue:CreateDatabase
+              - glue:DeleteDatabase
+              - glue:GetDatabase
+              - glue:GetDatabases
+              - glue:UpdateDatabase
+              - glue:CreateTable
+              - glue:DeleteTable
+              - glue:BatchDeleteTable
+              - glue:UpdateTable
+              - glue:GetTable
+              - glue:GetTables
+              - glue:BatchCreatePartition
+              - glue:CreatePartition
+              - glue:DeletePartition
+              - glue:BatchDeletePartition
+              - glue:UpdatePartition
+              - glue:GetPartition
+              - glue:GetPartitions
+              - glue:BatchGetPartition
+            Effect: Allow
+            Resource: '*'
+        - Statement:
+            Action:
+              - s3:GetBucketLocation
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:ListMultipartUploadParts
+              - s3:AbortMultipartUpload
+              - s3:CreateBucket
+              - s3:PutObject
+            Effect: Allow
+            Resource:
+              - arn:aws:s3:::test-automation-science37/*
+              - arn:aws:s3:::test-automation-science37
+        - Statement:
+            Action: athena:*
+            Effect: Allow
+            Resource: '*'
+      Events:
+        getHealth:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /health
+            Method: get
+        getV1Builds:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/builds
+            Method: get
+        postV1Builds:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/builds
+            Method: post
+        getV1Count:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/count
+            Method: get
+        getV1Dtag:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/dtag
+            Method: get
+        postV1Dtag:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/dtag
+            Method: post
+        getV1DtagId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/dtag/{id}
+            Method: get
+        deleteV1DtagId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/dtag/{id}
+            Method: delete
+        putV1DtagId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/dtag/{id}
+            Method: put
+        putV1DtagIdTestTestId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/dtag/{id}/test/{testId}
+            Method: put
+        getV1Fails:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/fails
+            Method: get
+        getV1HistoryId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/history/{id}
+            Method: get
+        getV1Taggedtest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/tagged_test
+            Method: get
+        postV1Taggedtest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/tagged_test
+            Method: post
+        getV1TaggedtestId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/tagged_test/{id}
+            Method: get
+        deleteV1TaggedtestId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/tagged_test/{id}
+            Method: delete
+        putV1TaggedtestId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/tagged_test/{id}
+            Method: put
+        getV1TestdetailKeyId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/test-detail/{key}/{id}
+            Method: get
+        getV1Testruns:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/test-runs
+            Method: get
+        getV1TestrunsKey:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /v1/test-runs/{key}
+            Method: get
+        getVersion:
+          Type: Api
+          Properties:
+            RestApiId: !Ref HeimdallProxyApi
+            Path: /version
+            Method: get
+      Environment:
+        Variables:
+          NODE_ENV: prod
+          SHA: !Ref SHA
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-def9a0a1
+        SubnetIds:
+          - subnet-fc060cb4
+          - subnet-d4917aad
+          - subnet-cf0cd295
+
+Outputs:
+  AwsApiId:
+    Value: !Ref HeimdallProxyApi

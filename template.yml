@@ -1,0 +1,59 @@
+# To package and deploy this lambda function, run the following commands:
+# npm install
+# aws cloudformation package --template ./template.yml --s3-bucket kiran-s37 --s3-prefix kiran-lambda --output-template-file output.yml
+# aws cloudformation deploy --template-file ./output.yml --stack-name kiran-lambda --capabilities CAPABILITY_IAM
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda sample by Kiran
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  KiranProxyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+
+  KiranLambda:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Description: Lambda Function
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 256
+      Timeout: 60
+      Policies:
+       - AWSLambdaVPCAccessExecutionRole # Managed Policy
+      Events:
+        allGet:
+          Type: Api
+          Properties:
+            RestApiId: !Ref KiranProxyApi
+            Path: /
+            Method: get
+        allPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref KiranProxyApi
+            Path: /
+            Method: post
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-bb560ac7
+        SubnetIds:
+          - subnet-fc060cb4
+          - subnet-d4917aad
+          - subnet-cf0cd295
+      Environment:
+        Variables:
+          NODE_ENV: dev
+
+Outputs:
+  KiranAPI:
+    Value: !Ref KiranProxyApi

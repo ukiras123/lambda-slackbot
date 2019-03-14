@@ -1,0 +1,10 @@
+{
+  "name": "kiran-lambda",
+  "version": "0.0.1",
+  "description": "Lambda with API Gateway",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "jest": "^22.4.4"
+  }
+}
