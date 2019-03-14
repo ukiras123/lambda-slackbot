@@ -5,7 +5,7 @@ exports.handler = async (event, context, callback) => {
   console.log("Incoming----\n",resource, path, httpMethod, queryStringParameters, pathParameters, body);
   const defaultMessage = {
     "statusCode": 200,
-    "body": "[\"aaa\",\"ccc\",\"ggg\",\"bbb\",\"ddd\"]"
+    "body": "I am working fine"
   }
   callback(null, defaultMessage);
 };
