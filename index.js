@@ -21,7 +21,6 @@ exports.handler = async (event, context, callback) => {
         return;
     }
 
-
     let AWS = require('aws-sdk');
     let lambda = new AWS.Lambda();
     let params = {
