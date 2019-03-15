@@ -1,7 +1,7 @@
 const rp = require('request-promise');
 
 const {getAllTCDetail, getPostOptions} = require('./util');
-const {basicPrivateBody} = require('./slackModel');
+const {basicPrivateBody, generateOQStatusBody} = require('./slackModel');
 
 async function processRequest(parsedBody) {
     const {text, response_url, path} = parsedBody;
@@ -12,7 +12,7 @@ async function processRequest(parsedBody) {
             console.log("error ", tcDetail.error);
             slackBody = basicPrivateBody(tcDetail.error);
         } else {
-
+            slackBody = generateOQStatusBody(tcDetail);
              console.log(`Final Body Generated: ${JSON.stringify(slackBody)}`)
         }
         const options = getPostOptions(response_url, slackBody);
