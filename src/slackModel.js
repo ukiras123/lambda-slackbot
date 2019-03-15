@@ -79,7 +79,9 @@ function _formatExReport(exReport) {
     let fields = "";
     Object.keys(exReport).forEach(function (key) {
         let count = exReport[key];
-        fields += `${key}: \`${count}\`\n`
+        if (count) {
+            fields += `${key}: \`${count}\`\n`
+        }
     });
     const k = {
         "type": "mrkdwn",
@@ -92,7 +94,7 @@ function _formatStatusReport(sReport) {
     let fields = "";
     Object.keys(sReport).forEach(function (key) {
         let count = sReport[key];
-        if (count && count !== 0) {
+        if (count) {
             fields += `${key}: \`${count}\`${_getAction(key)}\n`
         }
     });
