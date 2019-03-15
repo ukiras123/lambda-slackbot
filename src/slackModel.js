@@ -93,7 +93,7 @@ function _formatStatusReport(sReport) {
     Object.keys(sReport).forEach(function (key) {
         let count = sReport[key];
         if (count || key === "ReadyForTest" || key === "Approved" || key === "ReadyForReview" ) {
-            fields += `${key}: \`${count}\`${_getAction(key)}\n`
+            fields += `${key}: \`${count}\`${(count) ? _getAction(key) : ""}\n`
         }
     });
     const k = {
