@@ -2,6 +2,10 @@
   "name": "kiran-lambda",
   "version": "0.0.1",
   "description": "Lambda with API Gateway",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.235.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  },
   "devDependencies": {}
 }

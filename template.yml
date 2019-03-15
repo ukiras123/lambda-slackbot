@@ -1,11 +1,11 @@
 # To package and deploy this lambda function, run the following commands:
 # npm install
 # aws cloudformation package --template ./template.yml --s3-bucket kiran-s37 --s3-prefix kiran-lambda --output-template-file output.yml
-# aws cloudformation deploy --template-file ./output.yml --stack-name kiran-lambda --capabilities CAPABILITY_IAM
+# aws cloudformation deploy --template-file ./output.yml --stack-name kiran-stack --capabilities CAPABILITY_IAM
 
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Lambda sample by Kiran
+Description: Stack with Lambda function and API gateway
 
 Globals:
   Api:
@@ -15,7 +15,7 @@ Globals:
       AllowOrigin: "'*'"
 
 Resources:
-  KiranProxyApi:
+  KiranAPIGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
@@ -30,17 +30,21 @@ Resources:
       Timeout: 60
       Policies:
        - AWSLambdaVPCAccessExecutionRole # Managed Policy
+       - Statement:
+          Action: ssm:GetParameter
+          Effect: Allow
+          Resource: arn:aws:ssm:us-west-2:125900505984:parameter/spira/kiran
       Events:
         allGet:
           Type: Api
           Properties:
-            RestApiId: !Ref KiranProxyApi
+            RestApiId: !Ref KiranAPIGateway
             Path: /
             Method: get
         allPost:
           Type: Api
           Properties:
-            RestApiId: !Ref KiranProxyApi
+            RestApiId: !Ref KiranAPIGateway
             Path: /
             Method: post
       VpcConfig:
@@ -55,5 +59,5 @@ Resources:
           NODE_ENV: dev
 
 Outputs:
-  KiranAPI:
-    Value: !Ref KiranProxyApi
+  KiranGateway:
+    Value: !Ref KiranAPIGateway
