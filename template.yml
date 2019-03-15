@@ -20,10 +20,11 @@ Resources:
     Properties:
       StageName: Prod
 
-  KiranLambda:
+  KiranLambda1:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Description: Lambda Function
+      Description: Main Lambda Function for Slack Bot
+      FunctionName: BotEntryFunction
       Handler: index.handler
       Runtime: nodejs8.10
       MemorySize: 256
@@ -58,6 +59,31 @@ Resources:
         Variables:
           NODE_ENV: dev
 
+    KiranLambda2:
+      Type: 'AWS::Serverless::Function'
+      Properties:
+        Description: Lambda function to be triggered from another lambda
+        FunctionName: BotTriggerFunction
+        Handler: index.secondHandler
+        Runtime: nodejs8.10
+        MemorySize: 256
+        Timeout: 60
+        Policies:
+          - AWSLambdaVPCAccessExecutionRole # Managed Policy
+          - Statement:
+              Action: ssm:GetParameter
+              Effect: Allow
+              Resource: arn:aws:ssm:us-west-2:125900505984:parameter/spira/kiran
+        VpcConfig:
+          SecurityGroupIds:
+            - sg-bb560ac7
+          SubnetIds:
+            - subnet-fc060cb4
+            - subnet-d4917aad
+            - subnet-cf0cd295
+        Environment:
+          Variables:
+            NODE_ENV: dev
 Outputs:
   KiranGateway:
     Value: !Ref KiranAPIGateway

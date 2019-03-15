@@ -1,24 +1,25 @@
 const rp = require('request-promise');
 
 const {getAllTCDetail, getPostOptions} = require('./util');
-const {basicPrivateBody, generateOQStatusBody} = require('./slackModel');
+const {basicPrivateBody} = require('./slackModel');
 
 async function processRequest(parsedBody) {
     const {command, text, response_url} = parsedBody;
     let slackBody = "";
-    if (command == '/oq-status' && text != "") {
+    if (command === '/oq-status' && text !== "") {
         const tcDetail = await getAllTCDetail(text);
         if (tcDetail.error) {
             console.log("error ", tcDetail.error);
             slackBody = basicPrivateBody(tcDetail.error);
         } else {
-            slackBody = generateOQStatusBody(tcDetail);
-            console.log(`Final Body Generated: ${JSON.stringify(slackBody)}`)
+             console.log(`Final Body Generated: ${JSON.stringify(slackBody)}`)
         }
         const options = getPostOptions(response_url, slackBody);
         try {
-            rp(options);
+            await rp(options);
         } catch (error) {
+            const errorOption = getPostOptions(response_url, basicPrivateBody("Something went wrong. Please try again."));
+            await rp(errorOption);
             console.log("Error during slack post ", error);
         }
     }
@@ -26,10 +27,7 @@ async function processRequest(parsedBody) {
 
 function isValidRequest(options) {
     const {command, response_url, text} = options.payload;
-    if (!command || !response_url || !text || text == "") {
-        return false;
-    }
-    return true;
+    return !(!command || !response_url || !text || text === "");
 }
 
 

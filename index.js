@@ -1,6 +1,6 @@
 'use strict';
 const {get200Response} = require('./src/util');
-const {basicBody, basicPrivateBody} = require('./src/slackModel');
+const {basicPrivateBody} = require('./src/slackModel');
 const {isValidRequest, processRequest} = require('./src/controller');
 const queryString = require('query-string')
 
@@ -20,8 +20,22 @@ exports.handler = async (event, context, callback) => {
         callback(null, get200Response(slackBody));
         return;
     }
-    callback(null, get200Response(slackBody));
-    processRequest(parsedBody);
+
+
+    let AWS = require('aws-sdk');
+    let lambda = new AWS.Lambda();
+    let params = {
+        FunctionName: 'BotTriggerFunction',
+        InvocationType: 'Event', // Ensures asynchronous execution
+        Payload: JSON.stringify({body: parsedBody})
+    };
+    return lambda.invoke(params).promise()
+    .then(() => callback(null, get200Response(slackBody)));
 };
 
 
+exports.secondHandler = async (event, context, callback) => {
+    const parsedBody = event.body;
+    await processRequest(parsedBody);
+    callback(null, get200Response("Success"));
+};
