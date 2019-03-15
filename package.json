@@ -8,6 +8,10 @@
   },
   "dependencies": {
     "aws-sdk": "^2.235.1",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "moment": "^2.24.0",
+    "query-string": "^6.4.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
   },
