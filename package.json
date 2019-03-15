@@ -2,6 +2,10 @@
   "name": "kiran-lambda",
   "version": "0.0.1",
   "description": "Lambda with API Gateway",
+  "scripts": {
+    "build": "aws cloudformation package --template ./template.yml --s3-bucket kiran-s37 --s3-prefix kiran-lambda --output-template-file output.yml",
+    "deploy": "aws cloudformation deploy --template-file ./output.yml --stack-name kiran-stack --capabilities CAPABILITY_IAM"
+  },
   "dependencies": {
     "aws-sdk": "^2.235.1",
     "request": "^2.88.0",
