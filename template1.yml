@@ -1,7 +1,7 @@
 # To package and deploy this lambda function, run the following commands:
 # npm install
-# aws cloudformation package --template ./template.yml --s3-bucket kiran-s37 --s3-prefix kiran-lambda --output-template-file output.yml
-# aws cloudformation deploy --template-file ./output.yml --stack-name kiran-stack --capabilities CAPABILITY_IAM
+# aws cloudformation package --template ./template1.yml --s3-bucket kiran-s37 --s3-prefix kiran-lambda1 --output-template-file output.yml
+# aws cloudformation deploy --template-file ./output.yml --stack-name kiran-stack1 --capabilities CAPABILITY_IAM
 
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
@@ -20,10 +20,11 @@ Resources:
     Properties:
       StageName: Prod
 
-  KiranLambda:
+  KiranLambda1:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Description: Lambda Function
+      Description: Main Lambda Function for Slack Bot
+      FunctionName: BotEntryFunction
       Handler: index.handler
       Runtime: nodejs8.10
       MemorySize: 256
@@ -34,18 +35,22 @@ Resources:
           Action: ssm:GetParameter
           Effect: Allow
           Resource: arn:aws:ssm:us-west-2:125900505984:parameter/spira/kiran
+       - Statement:
+          Action: lambda:InvokeFunction
+          Effect: Allow
+          Resource: arn:aws:lambda:us-west-2:125900505984:function:BotTriggerFunction
       Events:
         allGet:
           Type: Api
           Properties:
             RestApiId: !Ref KiranAPIGateway
-            Path: /
+            Path: /status
             Method: get
         allPost:
           Type: Api
           Properties:
             RestApiId: !Ref KiranAPIGateway
-            Path: /
+            Path: /status
             Method: post
       VpcConfig:
         SecurityGroupIds:
@@ -57,7 +62,6 @@ Resources:
       Environment:
         Variables:
           NODE_ENV: dev
-
 Outputs:
   KiranGateway:
     Value: !Ref KiranAPIGateway
