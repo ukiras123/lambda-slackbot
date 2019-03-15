@@ -28,7 +28,7 @@ exports.handler = async (event, context, callback) => {
         Payload: JSON.stringify({body: parsedBody})
     };
 
-    slackBody = basicBody(`*Processing your request for \`${parsedBody.command} ${parsedBody.text}\`* :gottarun:`);
+    slackBody = basicPrivateBody(`*Processing your request for \`${parsedBody.command} ${parsedBody.text}\`* :gottarun:`);
     return lambda.invoke(params).promise()
     .then(() => callback(null, get200Response(slackBody)));
 };
