@@ -79,14 +79,12 @@ function _formatExReport(exReport) {
     let fields = "";
     Object.keys(exReport).forEach(function (key) {
         let count = exReport[key];
-        if (count) {
-            fields += `${key}: \`${count}\`\n`
-        }
+        fields += `${key}: \`${count}\`\n`
     });
     const k = {
         "type": "mrkdwn",
         "text": `*OQ Execution Report:*\n${fields}`
-    }
+    };
     return k;
 }
 
@@ -94,14 +92,14 @@ function _formatStatusReport(sReport) {
     let fields = "";
     Object.keys(sReport).forEach(function (key) {
         let count = sReport[key];
-        if (count) {
+        if (count || key === "ReadyForTest" || key === "Approved" || key === "ReadyForReview" ) {
             fields += `${key}: \`${count}\`${_getAction(key)}\n`
         }
     });
     const k = {
         "type": "mrkdwn",
         "text": `*OQ Status Report:*\n${fields}`
-    }
+    };
 
     return k;
 }
@@ -112,7 +110,7 @@ function _releaseURL(releaseId) {
 
 function _createBlockMessage(blocks) {
     console.log("Blocks: ", blocks);
-    return {"blocks": blocks};
+    return {response_type: 'in_channel', "blocks": blocks};
 }
 
 function _formatFinish() {
