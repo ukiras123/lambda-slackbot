@@ -4,14 +4,15 @@ const {getAllTCDetail, getPostOptions} = require('./util');
 const {basicPrivateBody} = require('./slackModel');
 
 async function processRequest(parsedBody) {
-    const {command, text, response_url} = parsedBody;
+    const {text, response_url, path} = parsedBody;
     let slackBody = "";
-    if (command === '/oq-status' && text !== "") {
+    if (path === '/status' && text && text !== "") {
         const tcDetail = await getAllTCDetail(text);
         if (tcDetail.error) {
             console.log("error ", tcDetail.error);
             slackBody = basicPrivateBody(tcDetail.error);
         } else {
+
              console.log(`Final Body Generated: ${JSON.stringify(slackBody)}`)
         }
         const options = getPostOptions(response_url, slackBody);
@@ -25,9 +26,9 @@ async function processRequest(parsedBody) {
     }
 }
 
-function isValidRequest(options) {
+function isValidRequest(options, path) {
     const {command, response_url, text} = options.payload;
-    return !(!command || !response_url || !text || text === "");
+    return !( (!command || !response_url || !text || text === "") && (path !== '/status'));
 }
 
 

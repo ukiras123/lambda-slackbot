@@ -19,6 +19,8 @@ coverage/
 api.log
 npm-debug.log
 output.yml
+output1.yml
+output2.yml
 
 #omit new relic log files
 newrelic.log
