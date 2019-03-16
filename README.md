@@ -6,6 +6,10 @@ if its valid. It has the following features:
 
 - Send OQ Status
 
+### Required
+Parameter Store with following fields for Spira Access:
+- /spira/name : Spira API Name
+- /spira/key : Spira API Key
 
 ### How to deploy
 

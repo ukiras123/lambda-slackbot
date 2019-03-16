@@ -34,7 +34,9 @@ Resources:
        - Statement:
           Action: ssm:GetParameter
           Effect: Allow
-          Resource: arn:aws:ssm:us-west-2:125900505984:parameter/spira/kiran
+          Resource:
+           - arn:aws:ssm:us-west-2:125900505984:parameter/spira/name
+           - arn:aws:ssm:us-west-2:125900505984:parameter/spira/key
        - Statement:
           Action: lambda:InvokeFunction
           Effect: Allow

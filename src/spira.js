@@ -8,7 +8,7 @@ const ssm = new AWS.SSM({
 
 const SPIRA_URL = "https://science37.spiraservice.net/services/v5_0/RestService.svc"
 const SPIRA_USER = "/spira/name";
-const SPIRA_PASS = "/spira/password";
+const SPIRA_PASS = "/spira/key";
 
 class Spira {
     constructor() {
