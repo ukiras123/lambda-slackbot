@@ -1,6 +1,6 @@
 'use strict';
 const {get200Response} = require('./src/util');
-const {basicBody, basicPrivateBody} = require('./src/slackModel');
+const {basicPrivateBody} = require('./src/slackModel');
 const {isValidRequest, processRequest} = require('./src/controller');
 const queryString = require('query-string')
 
